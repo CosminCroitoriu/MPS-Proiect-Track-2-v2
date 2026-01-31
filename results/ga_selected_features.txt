@@ -1,0 +1,14 @@
+GENETIC ALGORITHM - SELECTED FEATURES
+==================================================
+
+Total features selected: 7/10
+Best fitness: 0.7923
+
+Selected features:
+  1. Resource Allocation
+  2. Work Hours per Week
+  3. Sleep Hours
+  4. Work-Life Balance Score
+  5. Deadline Pressure Score
+  6. Recognition Frequency
+  7. WFH Setup Available

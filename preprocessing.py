@@ -226,20 +226,53 @@ print(f"   ✓ Train set: {X_train.shape[0]} samples")
 print(f"   ✓ Test set: {X_test.shape[0]} samples")
 
 # =============================================================================
-# FEATURE SCALING
+# FEATURE SCALING (ONLY NUMERICAL FEATURES)
 # =============================================================================
 
 print("\n10. Applying Feature Scaling (StandardScaler)...")
 
+# Identify numerical and categorical features
+# Categorical/Binary features (already encoded 0/1) - should NOT be scaled
+categorical_features = ['Gender', 'Company Type', 'WFH Setup Available']
+
+# Numerical features - should be scaled
+numerical_features = [col for col in X.columns if col not in categorical_features]
+
+print(f"\n   Numerical features to scale ({len(numerical_features)}):")
+for feat in numerical_features:
+    print(f"      - {feat}")
+
+print(f"\n   Categorical features (not scaled) ({len(categorical_features)}):")
+for feat in categorical_features:
+    print(f"      - {feat}")
+
+# Scale only numerical features
 scaler = StandardScaler()
-X_train_scaled = scaler.fit_transform(X_train)
-X_test_scaled = scaler.transform(X_test)
+X_train_numerical_scaled = scaler.fit_transform(X_train[numerical_features])
+X_test_numerical_scaled = scaler.transform(X_test[numerical_features])
 
-# Convert back to DataFrame for easier handling
-X_train_scaled = pd.DataFrame(X_train_scaled, columns=X.columns, index=X_train.index)
-X_test_scaled = pd.DataFrame(X_test_scaled, columns=X.columns, index=X_test.index)
+# Convert back to DataFrame
+X_train_numerical_scaled = pd.DataFrame(
+    X_train_numerical_scaled, 
+    columns=numerical_features, 
+    index=X_train.index
+)
+X_test_numerical_scaled = pd.DataFrame(
+    X_test_numerical_scaled, 
+    columns=numerical_features, 
+    index=X_test.index
+)
 
-print("   ✓ Features scaled using StandardScaler (mean=0, std=1)")
+# Combine scaled numerical features with unscaled categorical features
+X_train_scaled = pd.concat([X_train_numerical_scaled, X_train[categorical_features]], axis=1)
+X_test_scaled = pd.concat([X_test_numerical_scaled, X_test[categorical_features]], axis=1)
+
+# Reorder columns to match original order
+X_train_scaled = X_train_scaled[X.columns]
+X_test_scaled = X_test_scaled[X.columns]
+
+print(f"\n   ✓ Scaled {len(numerical_features)} numerical features (mean=0, std=1)")
+print(f"   ✓ Kept {len(categorical_features)} categorical features unscaled (0/1)")
 print(f"   ✓ Scaler fitted on training data only")
 
 # =============================================================================
